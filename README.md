@@ -315,6 +315,7 @@ DevOps & Cloud Engineer
 
 - GitHub: `gauravdubey5`
 - LinkedIn: `gauravdubey5`
+- Portfolio: gauravdubey.pages.dev
 
 ## ⭐ Support
 
