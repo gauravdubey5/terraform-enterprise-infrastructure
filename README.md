@@ -58,31 +58,24 @@ Terraform
 
 ## 📂 Project Structure
 
-```text
-terraform-enterprise-infrastructure/
+azure-terraform-infrastructure
+
 │
-├── modules/
-│   ├── resource-group/
-│   ├── network/
-│   ├── compute/
-│   ├── storage/
-│   ├── key-vault/
-│   └── monitoring/
+
+├── modules
+│     ├── resource-group
+│     ├── network
+│     ├── nsg
+│     └── virtual-machine
 │
-├── environments/
-│   ├── dev/
-│   ├── test/
-│   └── prod/
+├── environments
+│     ├── dev
+│     ├── qa
+│     └── prod
 │
-├── backend.tf
-├── providers.tf
-├── variables.tf
-├── terraform.tfvars
-├── main.tf
-├── outputs.tf
-├── .gitignore
-└── README.md
-```
+└── .github
+      └── workflows
+            dev.yml
 
 ## ⚙️ Prerequisites
 
