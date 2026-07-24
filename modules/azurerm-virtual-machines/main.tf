@@ -5,7 +5,7 @@ resource "azurerm_network_interface" "nic" {
   resource_group_name = each.value.rg_name
 
   ip_configuration {
-    name                          = "dhondhu"
+    name                          = each.value.ip_nic_name
     subnet_id                     = data.azurerm_subnet.subnet[each.key].id
     public_ip_address_id          = data.azurerm_public_ip.public_ip[each.key].id
     private_ip_address_allocation = "Dynamic"
@@ -34,7 +34,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machine" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    sku       = "24_04-lts"
     version   = "latest"
   }
 }
