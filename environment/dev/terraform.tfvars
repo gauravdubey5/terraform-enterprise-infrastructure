@@ -1,109 +1,300 @@
+#############################################
+# Resource Groups
+#############################################
+
 resource_groups = {
   rg1 = {
-    name       = "dev-rg"
-    location   = "centralindia"
-    managed_by = "terraform"
+    name       = "gaurav-dev-rg"
+    location   = "Central India"
+    managed_by = "Terraform"
   }
-
 }
+
+#############################################
+# Virtual Networks
+#############################################
 
 virtual_networks = {
   vnet1 = {
-    name                = "dev-vnet1"
-    location            = "centralindia"
-    resource_group_name = "dev-rg"
-    address_space       = ["192.22.0.0/16"]
-
+    name                = "gaurav-dev-vnet"
+    location            = "Central India"
+    resource_group_name = "gaurav-dev-rg"
+    address_space       = ["10.0.0.0/16"]
   }
-  # vnet2 = {
-  #   name                = "dev-vnet2"
-  #   location            = "centralindia"
-  #   resource_group_name = "dev-rg"
-  #   address_space       = ["192.22.0.0/16"]
-
-  # }
-
 }
+
+#############################################
+# Subnets
+#############################################
 
 subnets = {
-  snt1 = {
+
+  frontend = {
     name                 = "frontend"
-    resource_group_name  = "dev-rg"
-    virtual_network_name = "dev-vnet1"
-    address_prefixes     = ["192.22.0.0/24"]
+    resource_group_name  = "gaurav-dev-rg"
+    virtual_network_name = "gaurav-dev-vnet"
+    address_prefixes     = ["10.0.1.0/24"]
   }
-  snt3 = {
+
+  backend = {
     name                 = "backend"
-    resource_group_name  = "dev-rg"
-    virtual_network_name = "dev-vnet1"
-    address_prefixes     = ["192.22.2.0/24"]
+    resource_group_name  = "gaurav-dev-rg"
+    virtual_network_name = "gaurav-dev-vnet"
+    address_prefixes     = ["10.0.2.0/24"]
   }
 
-  snt2 = {
+  bastion = {
     name                 = "AzureBastionSubnet"
-    resource_group_name  = "dev-rg"
-    virtual_network_name = "dev-vnet1"
-    address_prefixes     = ["192.22.1.0/24"]
+    resource_group_name  = "gaurav-dev-rg"
+    virtual_network_name = "gaurav-dev-vnet"
+    address_prefixes     = ["10.0.3.0/24"]
   }
+
 }
 
-public_ip = {
-  pip1 = {
-    name                = "nic_pip"
-    resource_group_name = "dev-rg"
-    location            = "centralindia"
-    allocation_method   = "Static"
+#############################################
+# Network Security Groups
+#############################################
+
+network_security_groups = {
+
+  web = {
+
+    name                = "frontend-nsg"
+    location            = "Central India"
+    resource_group_name = "gaurav-dev-rg"
+
+    security_rules = {
+
+      AllowSSH = {
+        priority                   = 100
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "22"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+      }
+
+      AllowHTTP = {
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "80"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+      }
+
+    }
+
   }
-  pip2 = {
-    name                = "nic_pip1"
-    resource_group_name = "dev-rg"
-    location            = "centralindia"
-    allocation_method   = "Static"
-  }
+
 }
 
+#############################################
+# Route Tables
+#############################################
 
+route_tables = {
+
+  rt1 = {
+
+    name                = "gaurav-dev-rt"
+    location            = "Central India"
+    resource_group_name = "gaurav-dev-rg"
+
+    routes = {
+
+      internet = {
+
+        address_prefix         = "0.0.0.0/0"
+        next_hop_type          = "Internet"
+        next_hop_in_ip_address = null
+
+      }
+
+    }
+
+  }
+
+}
+
+#############################################
+# Public IPs
+#############################################
+
+public_ips = {
+
+  frontend = {
+    name                = "frontend-pip"
+    resource_group_name = "gaurav-dev-rg"
+    location            = "Central India"
+    allocation_method   = "Static"
+    sku                 = "Standard"
+  }
+
+  bastion = {
+    name                = "bastion-pip"
+    resource_group_name = "gaurav-dev-rg"
+    location            = "Central India"
+    allocation_method   = "Static"
+    sku                 = "Standard"
+  }
+
+}
+
+#############################################
+# NAT Gateway
+#############################################
+
+nat_gateways = {
+
+  nat1 = {
+
+    name                 = "gaurav-dev-nat"
+    location             = "Central India"
+    resource_group_name  = "gaurav-dev-rg"
+    public_ip_name       = "frontend-pip"
+    subnet_name          = "frontend"
+    virtual_network_name = "gaurav-dev-vnet"
+
+  }
+
+}
+
+#############################################
+# Bastion
+#############################################
+
+bastions = {
+
+  bastion1 = {
+
+    name                 = "gaurav-dev-bastion"
+    location             = "Central India"
+    resource_group_name  = "gaurav-dev-rg"
+    public_ip_name       = "bastion-pip"
+    subnet_name          = "AzureBastionSubnet"
+    virtual_network_name = "gaurav-dev-vnet"
+
+  }
+
+}
+
+#############################################
+# Load Balancer
+#############################################
+
+load_balancers = {
+
+  lb1 = {
+
+    name                = "gaurav-dev-lb"
+    location            = "Central India"
+    resource_group_name = "gaurav-dev-rg"
+    public_ip_name      = "frontend-pip"
+
+  }
+
+}
+
+#############################################
+# Application Gateway
+#############################################
+
+application_gateways = {
+
+  appgw1 = {
+
+    name                 = "gaurav-dev-appgw"
+    location             = "Central India"
+    resource_group_name  = "gaurav-dev-rg"
+    subnet_name          = "frontend"
+    virtual_network_name = "gaurav-dev-vnet"
+    public_ip_name       = "frontend-pip"
+
+  }
+
+}
+
+#############################################
+# Storage Accounts
+#############################################
+
+storage_accounts = {
+
+  sa1 = {
+
+    name                = "gaurav-devstorage001"
+    location            = "Central India"
+    resource_group_name = "gaurav-dev-rg"
+
+    account_tier     = "Standard"
+    replication_type = "LRS"
+
+  }
+
+}
+
+#############################################
+# Key Vaults
+#############################################
+
+key_vaults = {
+
+  kv1 = {
+
+    name                = "gaurav-dev-kv-001"
+    location            = "Central India"
+    resource_group_name = "gaurav-dev-rg"
+
+  }
+
+}
+
+#############################################
+# Managed Disks
+#############################################
+
+managed_disks = {
+
+  disk1 = {
+
+    name                 = "vm-disk-01"
+    location             = "Central India"
+    resource_group_name  = "gaurav-dev-rg"
+    disk_size_gb         = 128
+    storage_account_type = "Premium_LRS"
+
+  }
+
+}
+
+#############################################
+# Virtual Machines
+#############################################
 
 virtual_machines = {
+
   vm1 = {
-    nic_name        = "frontend-vm-nic"
-    location        = "centralindia"
-    rg_name         = "dev-rg"
+
+    nic_name        = "frontend-nic"
+    location        = "Central India"
+    rg_name         = "gaurav-dev-rg"
     nic_subnet_name = "frontend"
-    nic_vnet_name   = "dev-vnet1"
-    nic_pip_name    = "nic_pip"
-    vm_name         = "frontend-vm"
-    vm_size         = "Standard_B1s"
-    admin_username  = "devopsadmin"
-    admin_password  = "DevOps@123"
-    ip_nic_name     = "xyz"
+    nic_vnet_name   = "gaurav-dev-vnet"
+    nic_pip_name    = "frontend-pip"
+
+    vm_name        = "frontend-vm"
+    vm_size        = "Standard_B2s"
+    admin_username = "azureuser"
+    admin_password = "Devops@123"
+
+    ip_nic_name = "frontend-ipconfig"
+
   }
-  vm2 = {
-    nic_name        = "backend-vm-nic"
-    location        = "centralindia"
-    rg_name         = "dev-rg"
-    nic_subnet_name = "backend"
-    nic_vnet_name   = "dev-vnet1"
-    nic_pip_name    = "nic_pip1"
-    vm_name         = "backend-vm"
-    vm_size         = "Standard_DC1ds_v3"
-    admin_username  = "devopsadmin"
-    admin_password  = "DevOps@123"
-    ip_nic_name     = "abc"
-  }
+
 }
-
-# Bastion = {
-#    bast1 = {
-#     name                = "gaurav"
-#     location            = "centralindia"
-#     resource_group_name = "dev-rg"
-
-#     ip_configuration = {
-#       name                 = "configuration"
-#       subnet_id            = "/subscriptions/xxx/subnets/AzureBastionSubnet"
-#       public_ip_address_id = "/subscriptions/xxx/publicIP/gauravpip"
-#     }
-#   }
-
-# }

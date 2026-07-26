@@ -1,0 +1,38 @@
+variable "nat_gateway_name" {
+  type = string
+}
+
+variable "resource_group_name" {
+  type = string
+}
+
+variable "location" {
+  type = string
+}
+
+variable "public_ip_id" {
+  type = string
+}
+
+variable "subnet_id" {
+  type = string
+}
+
+variable "idle_timeout" {
+
+  type    = number
+  default = 10
+
+}
+
+variable "tags" {
+
+  type = map(string)
+
+  default = {
+
+    ManagedBy = "Terraform"
+
+  }
+
+}

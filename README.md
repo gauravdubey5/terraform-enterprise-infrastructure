@@ -1,323 +1,334 @@
-# 🚀 Terraform Enterprise Infrastructure on Azure
+# 🚀 Azure Enterprise Infrastructure using Terraform
 
-A production-ready, modular, secure, and scalable Microsoft Azure infrastructure project built using **Terraform** and Infrastructure as Code (IaC) best practices.
+> Production-ready Azure Infrastructure as Code (IaC) using Terraform with a modular architecture, reusable modules, and environment-based deployments.
 
-This project demonstrates automated Azure resource provisioning, reusable Terraform architecture, remote state management, environment isolation, and enterprise-level cloud infrastructure deployment.
+![Terraform](https://img.shields.io/badge/Terraform-v1.8+-623CE4?style=for-the-badge&logo=terraform)
+![Azure](https://img.shields.io/badge/Microsoft-Azure-0078D4?style=for-the-badge&logo=microsoftazure)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![IaC](https://img.shields.io/badge/Infrastructure-as-Code-orange?style=for-the-badge)
 
-## 🏗️ Architecture
+---
 
-```text
-Developer
-    │
-    ▼
-GitHub Repository
-    │
-    ▼
-CI/CD Pipeline
-    │
-    ▼
-Terraform
-    │
-    ├── Azure Resource Group
-    ├── Virtual Network
-    ├── Subnets
-    ├── Network Security Groups
-    ├── Virtual Machines
-    ├── Storage Accounts
-    ├── Azure Key Vault
-    └── Azure Monitor
+# 📖 Overview
+
+This repository demonstrates how to build and manage Azure infrastructure using **Terraform** following a modular and reusable architecture.
+
+The project follows enterprise Infrastructure as Code (IaC) practices where each Azure service is developed as an independent Terraform module and deployed using environment-specific configurations.
+
+---
+
+# ✨ Features
+
+- Modular Terraform Architecture
+- Azure Infrastructure as Code (IaC)
+- Environment-based Deployments (Dev / QA / Prod)
+- Reusable Terraform Modules
+- Map(Object) Variable Structure
+- `for_each` Resource Deployment
+- Enterprise Folder Structure
+- Scalable Infrastructure Design
+
+---
+
+# 🏗 Architecture
+
+```
+                     Azure Subscription
+                              │
+                       Resource Group
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+        Virtual Network                 Storage Account
+              │                               │
+      ┌───────┴────────┐                 Key Vault
+      │                │
+ Frontend          Backend
+  Subnet            Subnet
+      │                │
+      │          Virtual Machine
+      │
+ Azure Bastion
+      │
+ NAT Gateway
+      │
+ Public IP
+      │
+ Load Balancer
+      │
+ Application Gateway
 ```
 
-## ✨ Key Features
+---
 
-- Modular and reusable Terraform architecture
-- Automated Microsoft Azure resource provisioning
-- Infrastructure as Code implementation
-- Separate development, testing, and production environments
-- Azure Blob Storage remote backend
-- Terraform state management and state locking
-- Secure Azure networking
-- Network Security Group rules
-- Centralized secrets management
-- Terraform validation and formatting
-- CI/CD-ready infrastructure
-- Scalable and maintainable project structure
+# 📂 Repository Structure
 
-## 🛠️ Technologies Used
-
-| Technology | Purpose |
-|---|---|
-| Microsoft Azure | Cloud infrastructure |
-| Terraform | Infrastructure provisioning |
-| Azure CLI | Azure resource management |
-| Git | Source-code version control |
-| GitHub | Repository management |
-| Azure DevOps | CI/CD automation |
-| PowerShell | Infrastructure automation |
-| Bash | Command-line automation |
-
-## 📂 Project Structure
-
-azure-terraform-infrastructure
-
+```
+terraform-enterprise-infrastructure/
 │
-
-├── modules
-│     ├── resource-group
-│     ├── network
-│     ├── nsg
-│     └── virtual-machine
+├── environments/
+│   ├── dev/
+│   ├── qa/
+│   └── prod/
 │
-├── environments
-│     ├── dev
-│     ├── qa
-│     └── prod
+├── modules/
+│   ├── azurerm-resource-groups/
+│   ├── azurerm-virtual-networks/
+│   ├── azurerm-subnets/
+│   ├── azurerm-network-security-groups/
+│   ├── azurerm-route-tables/
+│   ├── azurerm-public-ips/
+│   ├── azurerm-nat-gateways/
+│   ├── azurerm-bastions/
+│   ├── azurerm-load-balancers/
+│   ├── azurerm-application-gateways/
+│   ├── azurerm-storage-accounts/
+│   ├── azurerm-key-vaults/
+│   ├── azurerm-managed-disks/
+│   └── azurerm-virtual-machines/
 │
-└── .github
-      └── workflows
-            dev.yml
-
-## ⚙️ Prerequisites
-
-Install and configure:
-
-- Terraform
-- Microsoft Azure CLI
-- Git
-- An active Microsoft Azure subscription
-
-Verify the installations:
-
-```bash
-terraform --version
-
-az --version
-
-git --version
+├── README.md
+├── LICENSE
+├── CHANGELOG.md
+└── .gitignore
 ```
 
-## 🔐 Azure Authentication
+---
 
-Sign in to Microsoft Azure:
+# ☁ Azure Resources
 
-```bash
-az login
+- Resource Groups
+- Virtual Networks
+- Subnets
+- Network Security Groups
+- Route Tables
+- Public IP Addresses
+- NAT Gateways
+- Azure Bastion
+- Load Balancers
+- Application Gateways
+- Storage Accounts
+- Key Vaults
+- Managed Disks
+- Linux Virtual Machines
+
+---
+
+# 🧩 Project Design
+
+This repository uses a **Map(Object)** design pattern.
+
+Example:
+
+```hcl
+resource_groups = {
+  rg1 = {
+    name       = "dev-rg"
+    location   = "Central India"
+    managed_by = "Terraform"
+  }
+}
 ```
 
-Verify the active Azure subscription:
+Each Terraform module accepts an entire map and provisions resources using `for_each`.
 
-```bash
-az account show
+Example:
+
+```terraform
+module "resource_groups" {
+  source          = "../../modules/azurerm-resource-groups"
+  resource_groups = var.resource_groups
+}
 ```
 
-To select another subscription:
+This approach makes the code:
 
-```bash
-az account set \
---subscription "YOUR_SUBSCRIPTION_ID"
-```
+- Reusable
+- Scalable
+- Easy to maintain
+- Environment independent
 
-## 🚀 Deployment
+---
 
-Clone the repository:
+# 🚀 Getting Started
+
+## Clone Repository
 
 ```bash
 git clone https://github.com/gauravdubey5/terraform-enterprise-infrastructure.git
-```
 
-Open the project directory:
-
-```bash
 cd terraform-enterprise-infrastructure
 ```
 
-Initialize Terraform:
+---
+
+## Navigate to Environment
+
+```bash
+cd environments/dev
+```
+
+---
+
+## Initialize Terraform
 
 ```bash
 terraform init
 ```
 
-Format the Terraform configuration:
+---
+
+## Format Terraform Code
 
 ```bash
-terraform fmt -recursive
+terraform fmt
 ```
 
-Validate the configuration:
+---
+
+## Validate Configuration
 
 ```bash
 terraform validate
 ```
 
-Generate an execution plan:
+---
+
+## View Execution Plan
 
 ```bash
 terraform plan
 ```
 
-Deploy the Azure infrastructure:
+---
+
+## Deploy Infrastructure
 
 ```bash
 terraform apply
 ```
 
-Type:
+---
 
-```text
-yes
-```
-
-when Terraform requests confirmation.
-
-## 🧹 Destroy Infrastructure
-
-To remove all infrastructure created by Terraform:
+## Destroy Infrastructure
 
 ```bash
 terraform destroy
 ```
 
-Review the resources carefully before confirming the destroy operation.
+---
 
-## 🌍 Environment Management
+# 📁 Environment Structure
 
-The project supports multiple isolated environments:
+```
+environments/
 
-```text
-Development → environments/dev
-
-Testing → environments/test
-
-Production → environments/prod
+├── dev
+├── qa
+└── prod
 ```
 
-Environment-specific variable files can be used:
+Each environment contains:
 
-```bash
-terraform plan \
--var-file="environments/dev/dev.tfvars"
-```
-
-Deploy the development environment:
-
-```bash
-terraform apply \
--var-file="environments/dev/dev.tfvars"
-```
-
-## 🔒 Security Best Practices
-
-- Do not commit Terraform state files.
-- Do not store credentials in Terraform files.
-- Use Azure Key Vault for sensitive information.
-- Use Azure Blob Storage for the remote backend.
-- Apply least-privilege RBAC permissions.
-- Restrict inbound traffic through NSG rules.
-- Use pull requests and branch protection.
-- Run security checks before infrastructure deployment.
-
-## 🔍 Terraform Quality Checks
-
-Format the code:
-
-```bash
-terraform fmt -check -recursive
-```
-
-Validate the code:
-
-```bash
-terraform validate
-```
-
-Run Terraform security scanning:
-
-```bash
-tfsec .
-```
-
-Run static analysis:
-
-```bash
-tflint
-```
-
-Run policy and configuration scanning:
-
-```bash
-checkov -d .
-```
-
-## 📤 Terraform Outputs
-
-After deployment, view all outputs:
-
-```bash
-terraform output
-```
-
-View a specific output:
-
-```bash
-terraform output resource_group_name
-```
-
-## 🔮 Future Improvements
-
-- Azure DevOps multi-stage pipeline
-- GitHub Actions CI/CD workflow
-- Automated Terraform security scanning
-- Azure Kubernetes Service integration
-- Application Gateway integration
-- Azure Load Balancer
-- Private Endpoints
-- Azure Monitor alerts
-- Log Analytics Workspace
-- Cost-management policies
-
-## 🤝 Contributing
-
-Contributions and improvements are welcome.
-
-1. Fork this repository.
-2. Create a feature branch.
-
-```bash
-git checkout -b feature/new-feature
-```
-
-3. Commit the changes.
-
-```bash
-git commit -m "Add new infrastructure feature"
-```
-
-4. Push the branch.
-
-```bash
-git push origin feature/new-feature
-```
-
-5. Create a pull request.
-
-## 👨‍💻 Author
-
-**Gaurav Dubey**
-
-DevOps & Cloud Engineer
-
-- GitHub: `gauravdubey5`
-- LinkedIn: `gauravdubey5`
-- Portfolio: gauravdubey.pages.dev
-
-## ⭐ Support
-
-If this project is useful, give the repository a **⭐ Star**.
-
-## 📄 License
-
-This project is available under the MIT License.
+- backend.tf
+- providers.tf
+- versions.tf
+- variables.tf
+- terraform.tfvars
+- main.tf
+- outputs.tf
 
 ---
 
-Made with ❤️ by **Gaurav Dubey**
+# 📦 Module Structure
+
+Every Terraform module follows the same structure.
+
+```
+module-name/
+
+├── main.tf
+├── variables.tf
+├── outputs.tf
+└── README.md
+```
+
+---
+
+# 🛠 Technologies
+
+- Terraform
+- Microsoft Azure
+- AzureRM Provider
+- Azure CLI
+- Infrastructure as Code (IaC)
+- Git
+- GitHub
+
+---
+
+# 📚 Best Practices
+
+- Modular Infrastructure
+- Reusable Modules
+- Environment Separation
+- Version Controlled Infrastructure
+- Map(Object) Variables
+- for_each Resource Deployment
+- Standard Folder Structure
+- Clean Terraform Code
+
+---
+
+# 🔮 Future Improvements
+
+- Azure Storage Remote Backend
+- Azure Monitor
+- Log Analytics Workspace
+- Azure Firewall
+- Virtual Network Peering
+- Private Endpoints
+- Diagnostic Settings
+- Azure Kubernetes Service (AKS)
+- Virtual Machine Scale Sets (VMSS)
+
+---
+
+# 📋 Prerequisites
+
+- Terraform >= 1.8
+- Azure CLI
+- Azure Subscription
+- Git
+- Contributor access on Azure
+
+---
+
+# 👨‍💻 Author
+
+**Gaurav Dubey**
+
+- GitHub: https://github.com/gauravdubey5
+- LinkedIn: https://linkedin.com/in/gauravdubey5
+- GitHub: https://gauravdubey.pages.dev/
+
+---
+
+# ⭐ Support
+
+If you found this project useful:
+
+- ⭐ Star this repository
+- 🍴 Fork it
+- 🐛 Report issues
+- 🤝 Contribute with pull requests
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+## 💙 Built with Terraform and Microsoft Azure
