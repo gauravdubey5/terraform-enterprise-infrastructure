@@ -3,14 +3,11 @@ name: Terraform Plan
 on:
   push:
     branches:
-      - feature/**
-  pull_request:
-    branches:
-      - main
+      - feature/action-terraform
 
 jobs:
   terraform:
-    name: Terraform Init & Plan
+    name: Terraform Init and Plan
     runs-on: ubuntu-latest
 
     steps:
