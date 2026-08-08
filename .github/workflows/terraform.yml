@@ -1,13 +1,19 @@
-name: Terraform Plan
+name: Terraform CI/CD
 
 on:
   push:
     branches:
       - feature/action-terraform
+      - main
 
 jobs:
-  terraform:
-    name: Terraform Init, Validate and Plan
+
+  # ==========================================
+  # FEATURE BRANCH - PLAN ONLY
+  # ==========================================
+  terraform-plan:
+    name: Terraform Plan - Feature
+    if: github.ref == 'refs/heads/feature/action-terraform'
     runs-on: ubuntu-latest
 
     defaults:
@@ -16,89 +22,85 @@ jobs:
 
     steps:
 
-      # 1. Checkout repository
+      # Checkout
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Install Azure CLI
-      - name: Azure CLI Login
-        env:
-          AZURE_CLIENT_ID: "94ede968-1a88-4ca1-bf08-9c96c755c744"
-          AZURE_CLIENT_SECRET: "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d"
-          AZURE_TENANT_ID: "753fec2c-1ead-447d-8bf4-475a50a2a17c"
-          AZURE_SUBSCRIPTION_ID: "9608b603-53a3-46da-a88f-a475d87a56f9"
-        run: |
-          az login \
-            --service-principal \
-            --username "94ede968-1a88-4ca1-bf08-9c96c755c744" \
-            --password "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d" \
-            --tenant "753fec2c-1ead-447d-8bf4-475a50a2a17c"
+      # Azure Login
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
 
-          az account set \
-            --subscription "9608b603-53a3-46da-a88f-a475d87a56f9"
-
-          az account show
-
-      # 3. Setup Terraform
+      # Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # 4. Terraform Init
+      # Init
       - name: Terraform Init
         run: terraform init
 
-      # 5. Terraform Validate
+      # Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # 6. Terraform Plan
+      # Plan
       - name: Terraform Plan
         run: terraform plan
 
+
+  # ==========================================
+  # MAIN BRANCH - APPLY
+  # ==========================================
   terraform-apply:
-    name: Terraform Apply
+    name: Terraform Apply - Main
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-
-    needs: terraform-plan
-
-    # Apply ONLY after push to main
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     defaults:
       run:
-        working-directory: environments/preprod
+        working-directory: environment/dev
 
     steps:
-      - name: Checkout code
+
+      # Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Azure Login FIRST
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      # Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Azure Login
-        run: |
-          az login \
-            --service-principal \
-            --username "94ede968-1a88-4ca1-bf08-9c96c755c744" \
-            --password "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d" \
-            --tenant "753fec2c-1ead-447d-8bf4-475a50a2a17c"
-
-      - name: Set Azure Subscription
-        run: |
-          az account set \
-            --subscription "9608b603-53a3-46da-a88f-a475d87a56f9"
-
-      - name: Check Azure Login
-        run: az account show
-
+      # Init
       - name: Terraform Init
         run: terraform init
 
+      # Validate
       - name: Terraform Validate
         run: terraform validate
 
+      # Plan
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan
 
+      # Apply
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve
