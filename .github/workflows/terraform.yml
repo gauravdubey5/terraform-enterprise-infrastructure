@@ -1,0 +1,106 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - feature/action-terraform
+      - main
+
+jobs:
+
+  # ==========================================
+  # FEATURE BRANCH - PLAN ONLY
+  # ==========================================
+  terraform-plan:
+    name: Terraform Plan - Feature
+    if: github.ref == 'refs/heads/feature/action-terraform'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: environment/dev
+
+    steps:
+
+      # Checkout
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Azure Login
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      # Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Plan
+      - name: Terraform Plan
+        run: terraform plan
+
+
+  # ==========================================
+  # MAIN BRANCH - APPLY
+  # ==========================================
+  terraform-apply:
+    name: Terraform Apply - Main
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: environment/dev
+
+    steps:
+
+      # Checkout
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Azure Login FIRST
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      # Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Plan
+      - name: Terraform Plan
+        run: terraform plan
+
+      # Apply
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
