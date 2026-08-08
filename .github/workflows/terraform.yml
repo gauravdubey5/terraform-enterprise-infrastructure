@@ -24,14 +24,14 @@ jobs:
       - name: Azure CLI Login
         env:
           AZURE_CLIENT_ID: "94ede968-1a88-4ca1-bf08-9c96c755c744"
-          AZURE_CLIENT_SECRET: "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d"
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: "753fec2c-1ead-447d-8bf4-475a50a2a17c"
           AZURE_SUBSCRIPTION_ID: "9608b603-53a3-46da-a88f-a475d87a56f9"
         run: |
           az login \
             --service-principal \
             --username "94ede968-1a88-4ca1-bf08-9c96c755c744" \
-            --password "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d" \
+            --password "$AZURE_CLIENT_SECRET" \
             --tenant "753fec2c-1ead-447d-8bf4-475a50a2a17c"
 
           az account set \
