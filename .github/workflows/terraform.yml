@@ -10,6 +10,10 @@ jobs:
     name: Terraform Init and Plan
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: environment/dev
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
