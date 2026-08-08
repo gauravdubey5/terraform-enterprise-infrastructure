@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform:
-    name: Terraform Init and Plan
+    name: Terraform Init, Validate and Plan
     runs-on: ubuntu-latest
 
     defaults:
@@ -15,17 +15,42 @@ jobs:
         working-directory: environment/dev
 
     steps:
+
+      # 1. Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2. Install Azure CLI
+      - name: Azure CLI Login
+        env:
+          AZURE_CLIENT_ID: "94ede968-1a88-4ca1-bf08-9c96c755c744"
+          AZURE_CLIENT_SECRET: "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d"
+          AZURE_TENANT_ID: "753fec2c-1ead-447d-8bf4-475a50a2a17c"
+          AZURE_SUBSCRIPTION_ID: "9608b603-53a3-46da-a88f-a475d87a56f9"
+        run: |
+          az login \
+            --service-principal \
+            --username "94ede968-1a88-4ca1-bf08-9c96c755c744" \
+            --password "eZo8Q~mB7DbRLPcbrNtdRk47BalQ8jpohzSBDa9d" \
+            --tenant "753fec2c-1ead-447d-8bf4-475a50a2a17c"
+
+          az account set \
+            --subscription "9608b603-53a3-46da-a88f-a475d87a56f9"
+
+          az account show
+
+      # 3. Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # 4. Terraform Init
       - name: Terraform Init
         run: terraform init
 
+      # 5. Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
+      # 6. Terraform Plan
       - name: Terraform Plan
         run: terraform plan
