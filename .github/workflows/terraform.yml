@@ -23,19 +23,19 @@ jobs:
       # 2. Install Azure CLI
       - name: Azure CLI Login
         env:
-          AZURE_CLIENT_ID: "94ede968-1a88-4ca1-bf08-9c96c755c744"
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_TENANT_ID: "753fec2c-1ead-447d-8bf4-475a50a2a17c"
-          AZURE_SUBSCRIPTION_ID: "9608b603-53a3-46da-a88f-a475d87a56f9"
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
           az login \
             --service-principal \
-            --username "94ede968-1a88-4ca1-bf08-9c96c755c744" \
+            --username "$AZURE_CLIENT_ID" \
             --password "$AZURE_CLIENT_SECRET" \
-            --tenant "753fec2c-1ead-447d-8bf4-475a50a2a17c"
+            --tenant "$AZURE_TENANT_ID"
 
           az account set \
-            --subscription "9608b603-53a3-46da-a88f-a475d87a56f9"
+            --subscription "$AZURE_SUBSCRIPTION_ID"
 
           az account show
 
