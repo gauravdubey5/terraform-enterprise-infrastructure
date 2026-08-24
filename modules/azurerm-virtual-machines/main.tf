@@ -24,7 +24,7 @@ resource "azurerm_linux_virtual_machine" "virtual_machines" {
   resource_group_name = var.resource_group_name
 
   network_interface_ids = [
-    azurerm_network_interface.this.id
+    azurerm_network_interface.nics.id
   ]
 
   size = var.vm_size

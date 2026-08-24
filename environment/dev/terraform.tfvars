@@ -228,7 +228,7 @@ storage_accounts = {
 
   sa1 = {
 
-    name                = "gaurav-devstorage001"
+    name                = "gauravdevstorage001"
     location            = "Central India"
     resource_group_name = "gaurav-dev-rg"
 
@@ -292,6 +292,7 @@ virtual_machines = {
     vm_size        = "Standard_B2s"
     admin_username = "azureuser"
     admin_password = "Devops@123"
+    public_key     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEEt2HKeMp9bba2soQ/+rYg887VvfoLs0t15aNl/hEax gaurav@GAURAV-PC25"
 
     ip_nic_name = "frontend-ipconfig"
 

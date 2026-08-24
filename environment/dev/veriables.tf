@@ -89,11 +89,11 @@ variable "nat_gateways" {
   description = "Azure NAT Gateways"
 
   type = map(object({
-    name                = string
-    location            = string
-    resource_group_name = string
-    public_ip_name      = string
-    subnet_name         = string
+    name                 = string
+    location             = string
+    resource_group_name  = string
+    public_ip_name       = string
+    subnet_name          = string
     virtual_network_name = string
   }))
 
@@ -104,11 +104,11 @@ variable "bastions" {
   description = "Azure Bastion Hosts"
 
   type = map(object({
-    name                = string
-    location            = string
-    resource_group_name = string
-    public_ip_name      = string
-    subnet_name         = string
+    name                 = string
+    location             = string
+    resource_group_name  = string
+    public_ip_name       = string
+    subnet_name          = string
     virtual_network_name = string
   }))
 
@@ -132,12 +132,12 @@ variable "application_gateways" {
   description = "Azure Application Gateways"
 
   type = map(object({
-    name                = string
-    location            = string
-    resource_group_name = string
-    subnet_name         = string
+    name                 = string
+    location             = string
+    resource_group_name  = string
+    subnet_name          = string
     virtual_network_name = string
-    public_ip_name      = string
+    public_ip_name       = string
   }))
 
   default = {}
@@ -147,11 +147,11 @@ variable "storage_accounts" {
   description = "Azure Storage Accounts"
 
   type = map(object({
-    name                     = string
-    location                 = string
-    resource_group_name      = string
-    account_tier             = string
-    replication_type         = string
+    name                = string
+    location            = string
+    resource_group_name = string
+    account_tier        = string
+    replication_type    = string
   }))
 
   default = {}
@@ -198,6 +198,7 @@ variable "virtual_machines" {
     vm_size        = string
     admin_username = string
     admin_password = string
+    public_key     = string
 
     ip_nic_name = string
   }))
