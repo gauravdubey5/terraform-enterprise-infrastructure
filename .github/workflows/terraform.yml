@@ -42,7 +42,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan 
 
   terraform-apply:
     name: Apply
@@ -83,7 +83,7 @@ jobs:
 
       # Re-create the plan because each job uses a separate runner workspace.
       - name: Terraform plan
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan 
 
       - name: Terraform apply
-        run: terraform apply -no-color -auto-approve tfplan
+        run: terraform apply  -auto-approve
