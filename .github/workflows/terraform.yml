@@ -7,27 +7,18 @@ on:
       - main
 
 jobs:
-
-  # ==========================================
-  # FEATURE BRANCH - PLAN ONLY
-  # ==========================================
   terraform-plan:
-    name: Terraform Plan - Feature
-    if: github.ref == 'refs/heads/feature/action-terraform'
-    runs-on: self-hosted
-
+    name: Plan
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: environment/dev
 
     steps:
-
-      # Checkout
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # Azure Login
-      - name: Azure Login
+      - name: Azure login
         uses: azure/login@v3
         with:
           creds: |
@@ -38,43 +29,36 @@ jobs:
               "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
             }
 
-      # Terraform
-      - name: Setup Terraform
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # Init
-      - name: Terraform Init
+      - name: Terraform fmt
+        run: terraform fmt
+
+      - name: Terraform init
         run: terraform init
 
-      # Validate
-      - name: Terraform Validate
+      - name: Terraform validate
         run: terraform validate
 
-      # Plan
-      - name: Terraform Plan
-        run: terraform plan
+      - name: Terraform plan
+        run: terraform plan -no-color -out=tfplan
 
-
-  # ==========================================
-  # MAIN BRANCH - APPLY
-  # ==========================================
   terraform-apply:
-    name: Terraform Apply - Main
+    name: Apply
+    # Runs only after the Plan job succeeds, and only on main.
     if: github.ref == 'refs/heads/main'
+    needs: terraform-plan
     runs-on: self-hosted
-
     defaults:
       run:
         working-directory: environment/dev
 
     steps:
-
-      # Checkout
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # Azure Login FIRST
-      - name: Azure Login
+      - name: Azure login
         uses: azure/login@v3
         with:
           creds: |
@@ -85,22 +69,21 @@ jobs:
               "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
             }
 
-      # Terraform
-      - name: Setup Terraform
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # Init
-      - name: Terraform Init
+      - name: Terraform fmt
+        run: terraform fmt
+
+      - name: Terraform init
         run: terraform init
 
-      # Validate
-      - name: Terraform Validate
+      - name: Terraform validate
         run: terraform validate
 
-      # Plan
-      - name: Terraform Plan
-        run: terraform plan
+      # Re-create the plan because each job uses a separate runner workspace.
+      - name: Terraform plan
+        run: terraform plan -no-color -out=tfplan
 
-      # Apply
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform apply
+        run: terraform apply -no-color -auto-approve tfplan
