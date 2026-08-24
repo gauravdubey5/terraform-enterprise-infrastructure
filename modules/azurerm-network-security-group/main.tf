@@ -22,5 +22,5 @@ resource "azurerm_network_security_rule" "network_security_rules" {
   destination_address_prefix  = each.value.destination_address_prefix
 
   resource_group_name         = var.resource_group_name
-  network_security_group_name = azurerm_network_security_group.this.name
+  network_security_group_name = azurerm_network_security_group.network_security_groups.name
 }

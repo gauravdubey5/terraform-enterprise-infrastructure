@@ -20,7 +20,7 @@ resource "azurerm_lb_backend_address_pool" "backend_address_pools" {
 
   name            = "backend-pool"
 
-  loadbalancer_id = azurerm_lb.this.id
+  loadbalancer_id = azurerm_lb.lbs.id
 
 }
 
@@ -28,7 +28,7 @@ resource "azurerm_lb_probe" "lb_probes" {
 
   name            = "health-probe"
 
-  loadbalancer_id = azurerm_lb.this.id
+  loadbalancer_id = azurerm_lb.lbs.id
 
   protocol = "Tcp"
 
@@ -40,7 +40,7 @@ resource "azurerm_lb_rule" "lb_rules" {
 
   name = "http-rule"
 
-  loadbalancer_id = azurerm_lb.this.id
+  loadbalancer_id = azurerm_lb.lbs.id
 
   protocol = "Tcp"
 
@@ -51,9 +51,9 @@ resource "azurerm_lb_rule" "lb_rules" {
   frontend_ip_configuration_name = "frontend-ip"
 
   backend_address_pool_ids = [
-    azurerm_lb_backend_address_pool.this.id
+    azurerm_lb_backend_address_pool.backend_address_pools.id
   ]
 
-  probe_id = azurerm_lb_probe.this.id
+  probe_id = azurerm_lb_probe.lb_probes.id
 
 }
